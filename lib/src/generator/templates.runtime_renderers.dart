@@ -12005,7 +12005,7 @@ class _Renderer_Package extends RendererBase<Package> {
   }
 }
 
-String renderError(PackageTemplateData context, Template template) {
+String renderSearchPage(PackageTemplateData context, Template template) {
   var buffer = StringBuffer();
   _render_PackageTemplateData(context, template.ast, template, buffer);
   return buffer.toString();
@@ -12222,6 +12222,12 @@ class _Renderer_PackageTemplateData extends RendererBase<PackageTemplateData> {
 }
 
 String renderIndex(PackageTemplateData context, Template template) {
+  var buffer = StringBuffer();
+  _render_PackageTemplateData(context, template.ast, template, buffer);
+  return buffer.toString();
+}
+
+String renderError(PackageTemplateData context, Template template) {
   var buffer = StringBuffer();
   _render_PackageTemplateData(context, template.ast, template, buffer);
   return buffer.toString();
@@ -15699,6 +15705,7 @@ const _invisibleGetters = {
     'constructors',
     'displayName',
     'enclosingElement',
+    'enclosingElement2',
     'fields',
     'hasNonFinalField',
     'hasStaticMember',
@@ -15756,6 +15763,7 @@ const _invisibleGetters = {
     'declaration',
     'displayName',
     'enclosingElement',
+    'enclosingElement2',
     'hashCode',
     'isConst',
     'isDefaultConstructor',
@@ -15861,6 +15869,7 @@ const _invisibleGetters = {
     'displayName',
     'documentationComment',
     'enclosingElement',
+    'enclosingElement2',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -15933,6 +15942,7 @@ const _invisibleGetters = {
     'displayName',
     'documentationComment',
     'enclosingElement',
+    'enclosingElement2',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -15999,6 +16009,7 @@ const _invisibleGetters = {
   'ExtensionElement': {
     'accessors',
     'enclosingElement',
+    'enclosingElement2',
     'extendedType',
     'fields',
     'hashCode',
@@ -16135,6 +16146,7 @@ const _invisibleGetters = {
     'loadLibraryFunction',
     'name',
     'parts',
+    'parts2',
     'publicNamespace',
     'runtimeType',
     'topLevelElements',
@@ -16166,6 +16178,7 @@ const _invisibleGetters = {
     'displayName',
     'documentationComment',
     'enclosingElement',
+    'enclosingElement2',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -16310,6 +16323,7 @@ const _invisibleGetters = {
     'displayName',
     'documentationComment',
     'enclosingElement',
+    'enclosingElement2',
     'hasAlwaysThrows',
     'hasDefaultValue',
     'hasDeprecated',
@@ -16370,6 +16384,7 @@ const _invisibleGetters = {
     'correspondingSetter',
     'declaration',
     'enclosingElement',
+    'enclosingElement2',
     'hashCode',
     'isGetter',
     'isSetter',
@@ -16415,6 +16430,7 @@ const _invisibleGetters = {
     'aliasedElement',
     'aliasedType',
     'enclosingElement',
+    'enclosingElement2',
     'hashCode',
     'name',
     'runtimeType'
