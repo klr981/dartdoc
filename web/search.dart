@@ -139,7 +139,7 @@ List<IndexItem> findMatches(List<IndexItem> index, String query) {
 }
 
 const minLength = 1;
-var suggestionLimit = 10;
+const suggestionLimit = 10;
 
 void initializeSearch(
   InputElement input,
@@ -194,7 +194,7 @@ void initializeSearch(
   // Element use in listbox to inform the functionality of hitting enter in search box
   var moreResults = document.createElement('div');
   moreResults.classes.add('enter-search-message');
-  moreResults.innerHtml = 'Press "Enter" key to see more results if available';
+  //moreResults.innerHtml = 'Press "Enter" key to see more results if available';
   listBox.append(moreResults);
 
   // Element that contains the search suggestions in a new format
@@ -211,10 +211,10 @@ void initializeSearch(
         query, "<strong class='tt-highlight'>$sanitizedText</strong>");
   }
 
-  Map<String,Element> categoriesMap = new LinkedHashMap();
+  Map<Element,Element> categoriesMap = new LinkedHashMap();
 
   // Function that takes the name of the library/class the search suggestion belongs to and puts in the map
-  void categories(String suggestionLibrary, Element suggestion){
+  void categories(Element suggestionLibrary, Element suggestion){
     if(categoriesMap.containsKey(suggestionLibrary)){
       var element = categoriesMap[suggestionLibrary];
       if(element!=null) {
@@ -224,15 +224,16 @@ void initializeSearch(
     }
     else{
       var insert = document.createElement('span');
-      insert.classes.add('list-$suggestionLibrary');
+      insert.classes.add('list-${suggestionLibrary}');
       insert.append(suggestion);
       categoriesMap[suggestionLibrary]= insert;
     }
   }
 
   // Using the name of the library/class creates the Element for it
-  Element createCategory(String lib){
-    var categoryTitle = document.createElement('div');
+  Element createCategory(String lib, String href){
+    var categoryTitle = document.createElement('a');
+    categoryTitle.setAttribute('href', href);
     categoryTitle.classes.add('tt-category-title');
     categoryTitle.innerHtml = lib;
     return categoryTitle;
@@ -269,7 +270,9 @@ void initializeSearch(
     });
 
     if(match.enclosedBy!=null) {
-      categories(match.enclosedBy!.name, suggestion);
+      var category = '${match.enclosedBy!.name} ${match.enclosedBy!.type}';
+      var toMap = createCategory(category,match.enclosedBy!.href);
+      categories(toMap, suggestion);
     }
     return suggestion;
   }
@@ -294,14 +297,15 @@ void initializeSearch(
     }
   }
 
+  var totalSearch = 0;
   // Function that iterates through the map and appends it to the given HTML element
   void iterateCategoriesMap(Element e) {
     for (var k in categoriesMap.keys) {
-      var categoryTitle = createCategory(k);
-      e.append(categoryTitle);
+      e.append(k);
       if(categoriesMap[k]!=null) {
         var values = categoriesMap[k];
         e.append(values!);
+        totalSearch++;
       }
     }
   }
@@ -321,7 +325,7 @@ void initializeSearch(
 
       var summary = document.createElement('div');
       summary.classes.add('search-summary');
-      summary.innerHtml = 'for "$input"';
+      summary.innerHtml = '$totalSearch results for "$input"';
       mainContent?.append(summary);
 
       if (categoriesMap.isNotEmpty) {
@@ -331,7 +335,7 @@ void initializeSearch(
         var noResults = document.createElement('div');
         noResults.classes.add('search-summary');
         noResults.innerHtml =
-        'There was not a match for $input. Please try another search.';
+        'There was not a match for "$input". Please try another search.';
         mainContent?.append(noResults);
       }
   }
@@ -378,7 +382,8 @@ void initializeSearch(
     }
 
     var suggestions = findMatches(index, newValue);
-    if (suggestions.length > suggestionLimit) {
+    if (listBox.getAttribute('aria-expanded')=='true' && suggestions.length >= suggestionLimit) {
+      moreResults.innerHtml = 'Press "Enter" key to see ${suggestionLimit} of ${suggestions.length} more results available';
       suggestions = suggestions.sublist(0, suggestionLimit);
     }
 
@@ -407,10 +412,6 @@ void initializeSearch(
   });
 
   input.addEventListener('keydown', (Event event) {
-    if (suggestionElements.isEmpty) {
-      return;
-    }
-
     if (event.type != 'keydown') {
       return;
     }
@@ -419,10 +420,10 @@ void initializeSearch(
 
     if (event.code == 'Enter') {
       // If there no search suggestion selected then change the window location to the search.html
-      if(selectedElement==null){
+      if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'||suggestionElements.isEmpty){
         // Saves the input in the search to be used for creating the query parameter
         String input = actualValue;
-        var searchUri = Uri.parse('search_results_page.html');
+        var searchUri = Uri.parse('${window.location.origin}/search_results_page.html' );
         searchUri = searchUri.replace(queryParameters: {'query': input});
         window.location.assign(searchUri.toString());
       }
@@ -519,14 +520,10 @@ void initializeSearch(
   // Verifying the href to check if the search html was called to generate the main content elements that are going to be displayed
   if(window.location.href.contains('search_results_page.html')){
     var input = uri.queryParameters['query'];
-    suggestionLimit = 20;
     handle(input);
     searchResultPage(input!);
     hideSuggestions();
   }
-
-  suggestionLimit=10;
-
 }
 
 class SearchMatch {
@@ -570,7 +567,7 @@ class IndexItem {
     EnclosedBy? enclosedBy;
     if (data['enclosedBy'] != null) {
       final map = data['enclosedBy'] as Map<String, dynamic>;
-      enclosedBy = EnclosedBy._(name: map['name'], type: map['type']);
+      enclosedBy = EnclosedBy._(name: map['name'], type: map['type'], href: map['href']);
     }
 
     return IndexItem._(
@@ -588,10 +585,12 @@ class IndexItem {
 class EnclosedBy {
   final String name;
   final String type;
+  final String href;
 
-  // ["enclosedBy":{"name":"Accessor","type":"class"}]
+  // ["enclosedBy":{"name":"Accessor","type":"class","href":"link"}]
   EnclosedBy._({
     required this.name,
     required this.type,
+    required this.href
   });
 }

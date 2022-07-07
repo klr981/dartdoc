@@ -951,7 +951,6 @@ button {
   border-style: solid;
   border-color: lightgrey;
   border-width: 0.5px;
-  box-shadow: 3px  3px #CACACA;
 }
 
 .typeahead, .tt-query, .tt-hint{
@@ -966,6 +965,14 @@ button {
   background-position:4%;
   outline:0;
   background-size: 16px;
+}
+
+.search-summary{
+  margin-bottom: 10px;
+}
+
+a.tt-category-title{
+  font-size: 16px;
 }
 
 .enter-search-message{
