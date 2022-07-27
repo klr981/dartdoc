@@ -139,7 +139,9 @@ List<IndexItem> findMatches(List<IndexItem> index, String query) {
 }
 
 const minLength = 1;
-const suggestionLimit = 10;
+var suggestionLimit = 10;
+var allResults=0;
+const HtmlEscape htmlEscape = HtmlEscape();
 
 void initializeSearch(
   InputElement input,
@@ -211,22 +213,22 @@ void initializeSearch(
         query, "<strong class='tt-highlight'>$sanitizedText</strong>");
   }
 
-  Map<Element,Element> categoriesMap = new LinkedHashMap();
+  Map<String,Element> categoriesMap = new LinkedHashMap();
 
   // Function that takes the name of the library/class the search suggestion belongs to and puts in the map
   void categories(Element suggestionLibrary, Element suggestion){
-    if(categoriesMap.containsKey(suggestionLibrary)){
-      var element = categoriesMap[suggestionLibrary];
+    var input = suggestionLibrary.innerHtml;
+    if(categoriesMap[input]!=null){
+      var element = categoriesMap[input];
       if(element!=null) {
         element.append(suggestion);
-        categoriesMap.update(suggestionLibrary, (value) => element);
+        categoriesMap.update(input!, (value) => element);
       }
     }
     else{
-      var insert = document.createElement('span');
-      insert.classes.add('list-${suggestionLibrary}');
+      var insert = suggestionLibrary;
       insert.append(suggestion);
-      categoriesMap[suggestionLibrary]= insert;
+      categoriesMap[input!]= insert;
     }
   }
 
@@ -297,15 +299,12 @@ void initializeSearch(
     }
   }
 
-  var totalSearch = 0;
   // Function that iterates through the map and appends it to the given HTML element
   void iterateCategoriesMap(Element e) {
     for (var k in categoriesMap.keys) {
-      e.append(k);
       if(categoriesMap[k]!=null) {
         var values = categoriesMap[k];
         e.append(values!);
-        totalSearch++;
       }
     }
   }
@@ -325,7 +324,7 @@ void initializeSearch(
 
       var summary = document.createElement('div');
       summary.classes.add('search-summary');
-      summary.innerHtml = '$totalSearch results for "$input"';
+      summary.innerHtml = '$allResults results for "$input"';
       mainContent?.append(summary);
 
       if (categoriesMap.isNotEmpty) {
@@ -371,7 +370,7 @@ void initializeSearch(
     showSuggestions();
   }
 
-  void handle(String? newValue, [bool forceUpdate = false]) {
+  void handle(String? newValue , [bool forceUpdate = false]) {
     if (actualValue == newValue && !forceUpdate) {
       return;
     }
@@ -382,8 +381,9 @@ void initializeSearch(
     }
 
     var suggestions = findMatches(index, newValue);
-    if (listBox.getAttribute('aria-expanded')=='true' && suggestions.length >= suggestionLimit) {
-      moreResults.innerHtml = 'Press "Enter" key to see ${suggestionLimit} of ${suggestions.length} more results available';
+    allResults = suggestions.length;
+    if (suggestions.length > suggestionLimit) {
+      moreResults.innerHtml = 'Press "Enter" key to see all ${suggestions.length} results';
       suggestions = suggestions.sublist(0, suggestionLimit);
     }
 
@@ -419,20 +419,21 @@ void initializeSearch(
     event = event as KeyboardEvent;
 
     if (event.code == 'Enter') {
+      if(selectedElement!=null){
+        var selectingElement = selectedElement ?? 0;
+        var href = suggestionElements[selectingElement].dataset['href'];
+        if (href != null) {
+          window.location.assign('$htmlBase$href');
+        }
+        return;
+      }
       // If there no search suggestion selected then change the window location to the search.html
       if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'||suggestionElements.isEmpty){
         // Saves the input in the search to be used for creating the query parameter
         String input = actualValue;
         var searchUri = Uri.parse('${window.location.origin}/search_results_page.html' );
-        searchUri = searchUri.replace(queryParameters: {'query': input});
+        searchUri = searchUri.replace(queryParameters: {'query': htmlEscape.convert(input!)});
         window.location.assign(searchUri.toString());
-      }
-      else {
-        var href = suggestionElements[0].dataset['href'];
-        if (href != null) {
-          window.location.assign('$htmlBase$href');
-        }
-        return;
       }
     }
 
@@ -520,9 +521,11 @@ void initializeSearch(
   // Verifying the href to check if the search html was called to generate the main content elements that are going to be displayed
   if(window.location.href.contains('search_results_page.html')){
     var input = uri.queryParameters['query'];
-    handle(input);
+    suggestionLimit=allResults;
+    handle(htmlEscape.convert(input!));
     searchResultPage(input!);
     hideSuggestions();
+    suggestionLimit=10;
   }
 }
 
