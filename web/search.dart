@@ -430,10 +430,19 @@ void initializeSearch(
       // If there no search suggestion selected then change the window location to the search.html
       if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'||suggestionElements.isEmpty){
         // Saves the input in the search to be used for creating the query parameter
-        String input = actualValue;
-        var searchUri = Uri.parse('${window.location.origin}/search_results_page.html' );
-        searchUri = searchUri.replace(queryParameters: {'query': htmlEscape.convert(input!)});
-        window.location.assign(searchUri.toString());
+        String input = htmlEscape.convert(actualValue);
+        var relativePath = '';
+        if(document.querySelector('body')?.getAttribute('data-using-base-href')=='true'){
+          var relativePath = document.querySelector('base')?.getAttribute('href');
+        }
+        else {
+          var relativePath = document.querySelector('body')?.getAttribute('data-base-href');
+        }
+        var href = Uri.parse(window.location.href);
+        var base = href.resolve(relativePath!);
+        var search = base.resolve('search_results_page.html');
+        search = search.replace(queryParameters: {'query': input});
+        window.location.assign(search.toString());
       }
     }
 
@@ -521,9 +530,10 @@ void initializeSearch(
   // Verifying the href to check if the search html was called to generate the main content elements that are going to be displayed
   if(window.location.href.contains('search_results_page.html')){
     var input = uri.queryParameters['query'];
+    input = htmlEscape.convert(input!);
     suggestionLimit=allResults;
-    handle(htmlEscape.convert(input!));
-    searchResultPage(input!);
+    handle(input);
+    searchResultPage(input);
     hideSuggestions();
     suggestionLimit=10;
   }

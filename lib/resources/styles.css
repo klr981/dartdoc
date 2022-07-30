@@ -349,7 +349,7 @@ p {
 }
 
 a {
-  color: var(--main-hyperlinks-color);
+  color: #0175C2;
 }
 
 a:hover {
@@ -417,10 +417,6 @@ code {
 header h1 {
   font-weight: 400;
   margin-bottom: 16px;
-}
-
-header a{
-  color: var(--main-hyperlinks-color);
 }
 
 
