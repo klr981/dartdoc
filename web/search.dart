@@ -430,19 +430,23 @@ void initializeSearch(
       // If there no search suggestion selected then change the window location to the search.html
       if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'||suggestionElements.isEmpty){
         // Saves the input in the search to be used for creating the query parameter
-        String input = htmlEscape.convert(actualValue);
-        var relativePath = '';
-        if(document.querySelector('body')?.getAttribute('data-using-base-href')=='true'){
+        var input = htmlEscape.convert(actualValue);
+        if(document.querySelector('body')?.getAttribute('data-using-base-href')=='true' && document.querySelector('body')?.getAttribute('data-base-href') == ''){
           var relativePath = document.querySelector('base')?.getAttribute('href');
+          var href = Uri.parse(window.location.href);
+          var base = href.resolve(relativePath!);
+          var search =Uri.parse(base.toString() + 'search_results_page.html');
+          search = search.replace(queryParameters: {'query': input});
+          window.location.assign(search.toString());
         }
         else {
           var relativePath = document.querySelector('body')?.getAttribute('data-base-href');
+          var href = Uri.parse(window.location.href);
+          var base = href.resolve(relativePath!);
+          var search = Uri.parse(base.toString() + 'search_results_page.html');
+          search = search.replace(queryParameters: {'query': input});
+          window.location.assign(search.toString());
         }
-        var href = Uri.parse(window.location.href);
-        var base = href.resolve(relativePath!);
-        var search = base.resolve('search_results_page.html');
-        search = search.replace(queryParameters: {'query': input});
-        window.location.assign(search.toString());
       }
     }
 

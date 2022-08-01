@@ -15,6 +15,7 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_string_escapes
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:convert' as _i22;
 
 import 'package:dartdoc/src/generator/template_data.dart' as _i1;
@@ -729,61 +730,6 @@ String renderLibrary(_i1.LibraryTemplateData context0) {
   return buffer.toString();
 }
 
-String renderSearchPage(_i1.PackageTemplateData context0) {
-  final buffer = StringBuffer();
-  buffer.write(_renderSearchPage_partial_head_0(context0));
-  buffer.writeln();
-  buffer.write('''
-
-# ''');
-  buffer.writeEscaped(context0.title);
-  buffer.writeln();
-  var context1 = context0.defaultPackage;
-  buffer.writeln();
-  buffer.write(_renderSearchPage_partial_documentation_1(context1));
-  buffer.writeln();
-  var context2 = context0.localPackages;
-  for (var context3 in context2) {
-    if (context3.isFirstPackage == true) {
-      buffer.writeln();
-      buffer.write('''
-## Libraries''');
-    }
-    if (context3.isFirstPackage != true) {
-      buffer.writeln();
-      buffer.write('''
-## ''');
-      buffer.writeEscaped(context3.name);
-    }
-    buffer.writeln();
-    var context4 = context3.defaultCategory;
-    var context5 = context4.publicLibrariesSorted;
-    for (var context6 in context5) {
-      buffer.writeln();
-      buffer.write(_renderSearchPage_partial_library_2(context6));
-    }
-    buffer.writeln();
-    var context7 = context3.categoriesWithPublicLibraries;
-    for (var context8 in context7) {
-      buffer.writeln();
-      buffer.write('''
-### Category ''');
-      buffer.write(context8.categoryLabel);
-      buffer.writeln();
-      var context9 = context8.publicLibrariesSorted;
-      for (var context10 in context9) {
-        buffer.writeln();
-        buffer.write(_renderSearchPage_partial_library_2(context10));
-      }
-    }
-  }
-  buffer.write('\n\n');
-  buffer.write(_renderSearchPage_partial_footer_3(context0));
-  buffer.writeln();
-
-  return buffer.toString();
-}
-
 String renderMethod(_i1.MethodTemplateData context0) {
   final buffer = StringBuffer();
   buffer.write(_renderMethod_partial_head_0(context0));
@@ -948,6 +894,61 @@ String renderProperty(_i1.PropertyTemplateData context0) {
   }
   buffer.write('\n\n');
   buffer.write(_renderProperty_partial_footer_9(context0));
+  buffer.writeln();
+
+  return buffer.toString();
+}
+
+String renderSearchPage(_i1.PackageTemplateData context0) {
+  final buffer = StringBuffer();
+  buffer.write(_renderSearchPage_partial_head_0(context0));
+  buffer.writeln();
+  buffer.write('''
+
+# ''');
+  buffer.writeEscaped(context0.title);
+  buffer.writeln();
+  var context1 = context0.defaultPackage;
+  buffer.writeln();
+  buffer.write(_renderSearchPage_partial_documentation_1(context1));
+  buffer.writeln();
+  var context2 = context0.localPackages;
+  for (var context3 in context2) {
+    if (context3.isFirstPackage == true) {
+      buffer.writeln();
+      buffer.write('''
+## Libraries''');
+    }
+    if (context3.isFirstPackage != true) {
+      buffer.writeln();
+      buffer.write('''
+## ''');
+      buffer.writeEscaped(context3.name);
+    }
+    buffer.writeln();
+    var context4 = context3.defaultCategory;
+    var context5 = context4.publicLibrariesSorted;
+    for (var context6 in context5) {
+      buffer.writeln();
+      buffer.write(_renderSearchPage_partial_library_2(context6));
+    }
+    buffer.writeln();
+    var context7 = context3.categoriesWithPublicLibraries;
+    for (var context8 in context7) {
+      buffer.writeln();
+      buffer.write('''
+### Category ''');
+      buffer.write(context8.categoryLabel);
+      buffer.writeln();
+      var context9 = context8.publicLibrariesSorted;
+      for (var context10 in context9) {
+        buffer.writeln();
+        buffer.write(_renderSearchPage_partial_library_2(context10));
+      }
+    }
+  }
+  buffer.write('\n\n');
+  buffer.write(_renderSearchPage_partial_footer_3(context0));
   buffer.writeln();
 
   return buffer.toString();
@@ -1374,14 +1375,6 @@ String _renderLibrary_partial_typedef_10(_i8.Typedef context3) =>
     _deduplicated_lib_templates_md__typedef_md(context3);
 String _renderLibrary_partial_footer_11(_i1.LibraryTemplateData context0) =>
     _deduplicated_lib_templates_md__footer_md(context0);
-String _renderSearchPage_partial_head_0(_i1.PackageTemplateData context0) =>
-    _deduplicated_lib_templates_md__head_md(context0);
-String _renderSearchPage_partial_documentation_1(_i13.Package context1) =>
-    _deduplicated_lib_templates_md__documentation_md(context1);
-String _renderSearchPage_partial_library_2(_i4.Library context3) =>
-    _deduplicated_lib_templates_md__library_md(context3);
-String _renderSearchPage_partial_footer_3(_i1.PackageTemplateData context0) =>
-    _deduplicated_lib_templates_md__footer_md(context0);
 String _renderMethod_partial_head_0(_i1.MethodTemplateData context0) =>
     _deduplicated_lib_templates_md__head_md(context0);
 String _renderMethod_partial_source_link_1(_i14.Method context1) =>
@@ -1493,6 +1486,14 @@ String _renderProperty_partial_accessor_getter_7(_i10.Field context1) =>
 String _renderProperty_partial_accessor_setter_8(_i10.Field context1) =>
     _deduplicated_lib_templates_md__accessor_setter_md(context1);
 String _renderProperty_partial_footer_9(_i1.PropertyTemplateData context0) =>
+    _deduplicated_lib_templates_md__footer_md(context0);
+String _renderSearchPage_partial_head_0(_i1.PackageTemplateData context0) =>
+    _deduplicated_lib_templates_md__head_md(context0);
+String _renderSearchPage_partial_documentation_1(_i13.Package context1) =>
+    _deduplicated_lib_templates_md__documentation_md(context1);
+String _renderSearchPage_partial_library_2(_i4.Library context3) =>
+    _deduplicated_lib_templates_md__library_md(context3);
+String _renderSearchPage_partial_footer_3(_i1.PackageTemplateData context0) =>
     _deduplicated_lib_templates_md__footer_md(context0);
 String _renderTopLevelProperty_partial_head_0(
         _i1.TopLevelPropertyTemplateData context0) =>

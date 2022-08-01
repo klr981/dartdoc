@@ -21,10 +21,10 @@
 @Renderer(#renderFunction, Context<FunctionTemplateData>(), 'function')
 @Renderer(#renderIndex, Context<PackageTemplateData>(), 'index')
 @Renderer(#renderLibrary, Context<LibraryTemplateData>(), 'library')
-@Renderer(#renderSearchPage, Context<PackageTemplateData>(), 'search_results_page')
 @Renderer(#renderMethod, Context<MethodTemplateData>(), 'method')
 @Renderer(#renderMixin, Context<MixinTemplateData>(), 'mixin')
 @Renderer(#renderProperty, Context<PropertyTemplateData>(), 'property')
+@Renderer(#renderSearchPage, Context<PackageTemplateData>(), 'search_results_page')
 @Renderer(
     #renderSidebarForContainer,
     Context<TemplateDataWithContainer<Documentable>>(),
