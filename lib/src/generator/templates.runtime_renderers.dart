@@ -12041,7 +12041,7 @@ class _Renderer_Package extends RendererBase<Package> {
   }
 }
 
-String renderSearchPage(PackageTemplateData context, Template template) {
+String renderIndex(PackageTemplateData context, Template template) {
   var buffer = StringBuffer();
   _render_PackageTemplateData(context, template.ast, template, buffer);
   return buffer.toString();
@@ -12257,7 +12257,7 @@ class _Renderer_PackageTemplateData extends RendererBase<PackageTemplateData> {
   }
 }
 
-String renderIndex(PackageTemplateData context, Template template) {
+String renderSearchPage(PackageTemplateData context, Template template) {
   var buffer = StringBuffer();
   _render_PackageTemplateData(context, template.ast, template, buffer);
   return buffer.toString();
@@ -15735,34 +15735,7 @@ const _invisibleGetters = {
     'lineNumber',
     'runtimeType'
   },
-  'ClassElement': {
-    'accessors',
-    'allSupertypes',
-    'constructors',
-    'displayName',
-    'enclosingElement',
-    'enclosingElement2',
-    'fields',
-    'hasNonFinalField',
-    'hasStaticMember',
-    'hashCode',
-    'interfaces',
-    'isAbstract',
-    'isDartCoreEnum',
-    'isDartCoreObject',
-    'isEnum',
-    'isMixin',
-    'isMixinApplication',
-    'isValidMixin',
-    'methods',
-    'mixins',
-    'name',
-    'runtimeType',
-    'superclassConstraints',
-    'supertype',
-    'thisType',
-    'unnamedConstructor'
-  },
+  'ClassElement': {'augmented', 'hashCode', 'runtimeType'},
   'CommentReferable': {
     'definingCommentReferable',
     'href',
@@ -15778,12 +15751,15 @@ const _invisibleGetters = {
     'classes',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'enums',
+    'enums2',
     'extensions',
     'functions',
     'hashCode',
     'lineInfo',
     'mixins',
+    'mixins2',
     'runtimeType',
     'session',
     'topLevelVariables',
@@ -15796,10 +15772,12 @@ const _invisibleGetters = {
     'publicConstructorsSorted'
   },
   'ConstructorElement': {
+    'augmentation',
     'declaration',
     'displayName',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hashCode',
     'isConst',
     'isDefaultConstructor',
@@ -15905,6 +15883,7 @@ const _invisibleGetters = {
     'documentationComment',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -15914,6 +15893,7 @@ const _invisibleGetters = {
     'hasIsTestGroup',
     'hasJS',
     'hasLiteral',
+    'hasMustBeOverridden',
     'hasMustCallSuper',
     'hasNonVirtual',
     'hasOptionalTypeArgs',
@@ -15956,6 +15936,7 @@ const _invisibleGetters = {
     'isIsTestGroup',
     'isJS',
     'isLiteral',
+    'isMustBeOverridden',
     'isMustCallSuper',
     'isNonVirtual',
     'isOptionalTypeArgs',
@@ -15978,6 +15959,7 @@ const _invisibleGetters = {
     'documentationComment',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -15988,6 +15970,7 @@ const _invisibleGetters = {
     'hasIsTestGroup',
     'hasJS',
     'hasLiteral',
+    'hasMustBeOverridden',
     'hasMustCallSuper',
     'hasNonVirtual',
     'hasOptionalTypeArgs',
@@ -16045,6 +16028,7 @@ const _invisibleGetters = {
     'accessors',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'extendedType',
     'fields',
     'hashCode',
@@ -16062,6 +16046,7 @@ const _invisibleGetters = {
     'sortGroup'
   },
   'FieldElement': {
+    'augmentation',
     'declaration',
     'hashCode',
     'isAbstract',
@@ -16214,6 +16199,7 @@ const _invisibleGetters = {
     'documentationComment',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hasAlwaysThrows',
     'hasDeprecated',
     'hasDoNotStore',
@@ -16223,6 +16209,7 @@ const _invisibleGetters = {
     'hasIsTestGroup',
     'hasJS',
     'hasLiteral',
+    'hasMustBeOverridden',
     'hasMustCallSuper',
     'hasNonVirtual',
     'hasOptionalTypeArgs',
@@ -16254,7 +16241,7 @@ const _invisibleGetters = {
     'source',
     'substitution'
   },
-  'MethodElement': {'declaration', 'hashCode', 'runtimeType'},
+  'MethodElement': {'augmentation', 'declaration', 'hashCode', 'runtimeType'},
   'ModelElementRenderer': {'hashCode', 'runtimeType'},
   'ModelNode': {
     'commentRefs',
@@ -16359,6 +16346,7 @@ const _invisibleGetters = {
     'documentationComment',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hasAlwaysThrows',
     'hasDefaultValue',
     'hasDeprecated',
@@ -16370,6 +16358,7 @@ const _invisibleGetters = {
     'hasIsTestGroup',
     'hasJS',
     'hasLiteral',
+    'hasMustBeOverridden',
     'hasMustCallSuper',
     'hasNonVirtual',
     'hasOptionalTypeArgs',
@@ -16415,11 +16404,13 @@ const _invisibleGetters = {
   },
   'ParameterizedType': {'hashCode', 'runtimeType', 'typeArguments'},
   'PropertyAccessorElement': {
+    'augmentation',
     'correspondingGetter',
     'correspondingSetter',
     'declaration',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hashCode',
     'isGetter',
     'isSetter',
@@ -16466,6 +16457,7 @@ const _invisibleGetters = {
     'aliasedType',
     'enclosingElement',
     'enclosingElement2',
+    'enclosingElement3',
     'hashCode',
     'name',
     'runtimeType'

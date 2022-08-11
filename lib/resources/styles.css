@@ -950,7 +950,7 @@ button {
   color: #212121;
 }
 
-.typeahead, .tt-query, .tt-hint{
+.typeahead, .tt-query, .tt-hint {
   padding:17px;
   padding-left:50px;
   width:422px;
@@ -964,16 +964,16 @@ button {
   background-size: 16px;
 }
 
-.search-summary{
+.search-summary {
   margin-bottom: 10px;
 }
 
-a.tt-category-title{
+a.tt-category-title {
   font-size: 16px;
   color: #0175C2;
 }
 
-.enter-search-message{
+.enter-search-message {
     position: -webkit-sticky;
     position: sticky;
     top: 0px;
@@ -1024,7 +1024,7 @@ a.tt-category-title{
   margin-top:4px;
 }
 
-.temp-box{
+.temp-box {
  width: 0px;
 }
 
@@ -1066,17 +1066,17 @@ a.tt-category-title{
     width: 0px;
   }
 
-  #sidenav-left-toggle{
+  #sidenav-left-toggle {
    margin-right:10px;
    margin-left:20px;
   }
 
-  .self-name{
+  .self-name {
    margin-right:10px;
   }
 }
 
-.one-line-description{
+.one-line-description {
   font-size: 12px;
   margin-right:10px;
   margin-left: 10px;

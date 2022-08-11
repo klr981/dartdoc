@@ -96,7 +96,6 @@ List<IndexItem> findMatches(List<IndexItem> index, String query) {
   for (var element in index) {
     void score(int value) {
       value -= (element.overriddenDepth ?? 0) * 10;
-      print(element.type);
       var weightFactor = weights[element.type] ?? 4;
       allMatches.add(SearchMatch(element, value / weightFactor));
     }
@@ -106,7 +105,6 @@ List<IndexItem> findMatches(List<IndexItem> index, String query) {
     var lowerName = name.toLowerCase();
     var lowerQualifiedName = qualifiedName.toLowerCase();
     var lowerQuery = query.toLowerCase();
-    var oneLineDescription = element.desc;
 
 
     if (name == query || qualifiedName == query || name == 'dart:$query') {
@@ -118,9 +116,6 @@ List<IndexItem> findMatches(List<IndexItem> index, String query) {
     } else if (query.length > 1) {
       if (name.startsWith(query) || qualifiedName.startsWith(query)) {
         score(750);
-      // } else if (oneLineDescription.runtimeType!=Null && oneLineDescription!='' && oneLineDescription?.contains(query)==true){
-      //   print('ok? ${oneLineDescription?.contains(query)==true}');
-      //   score(700);
       } else if (lowerName.startsWith(lowerQuery) ||
           lowerQualifiedName.startsWith(lowerQuery)) {
         score(650);
@@ -321,46 +316,37 @@ void initializeSearch(
 
   // Function that creates the content displayed in the main-content element
   void searchResultPage(String input){
-      var mainContent = document.getElementById('dartdoc-main-content');
-      mainContent?.text='';
+    var mainContent = document.getElementById('dartdoc-main-content');
+    mainContent?.text='';
 
-      var section = document.createElement('section');
-      section.classes.add('search-summary');
-      mainContent?.append(section);
+    var section = document.createElement('section');
+    section.classes.add('search-summary');
+    mainContent?.append(section);
 
-      var title = document.createElement('h2');
-      title.innerHtml = 'Search Results';
-      mainContent?.append(title);
+    var title = document.createElement('h2');
+    title.innerHtml = 'Search Results';
+    mainContent?.append(title);
 
-      var summary = document.createElement('div');
-      summary.classes.add('search-summary');
-      summary.innerHtml = '$allResults results for "$input"';
-      mainContent?.append(summary);
+    var summary = document.createElement('div');
+    summary.classes.add('search-summary');
+    summary.innerHtml = '$allResults results for "$input"';
+    mainContent?.append(summary);
 
-      if (categoriesMap.isNotEmpty) {
-        iterateCategoriesMap(mainContent!);
-      }
-      else {
-        var noResults = document.createElement('div');
-        noResults.classes.add('search-summary');
-        noResults.innerHtml =
-        'There was not a match for "$input". Please try another search.';
-        mainContent?.append(noResults);
-      }
+    if (categoriesMap.isNotEmpty) {
+      iterateCategoriesMap(mainContent!);
+    }
+    else {
+      var noResults = document.createElement('div');
+      noResults.classes.add('search-summary');
+      noResults.innerHtml =
+      'There was not a match for "$input". Please try another search.';
+      mainContent?.append(noResults);
+    }
   }
 
   void hideSuggestions() {
     listBox.style.display = 'none';
     listBox.setAttribute('aria-expanded', 'false');
-  }
-
-  void enterMessage(){
-    if(allResults>10){
-      moreResults.innerHtml = 'Press "Enter" key to see all $allResults results';
-    }
-    else{
-      moreResults.innerHtml = '';
-    }
   }
 
   void updateSuggestions(String query, List<IndexItem> suggestions) {
@@ -369,9 +355,15 @@ void initializeSearch(
     categoriesMap = new LinkedHashMap();
     searchResults.text = '';
 
-    if (suggestions.length < minLength) {
+    if (query.isEmpty && suggestions.length < minLength) {
       setHint(null);
       hideSuggestions();
+      return;
+    }
+
+    if(query.isNotEmpty && suggestions.length < minLength){
+      setHint(null);
+      moreResults.innerHtml = 'Press "Enter" key to search in dart.dev and api.dart.dev';
       return;
     }
 
@@ -387,7 +379,24 @@ void initializeSearch(
     selectedElement = null;
 
     showSuggestions();
-    enterMessage();
+    moreResults.innerHtml = 'Press "Enter" key to all results';
+  }
+
+  String relativePath(){
+    var relativePath = '';
+    if(document.querySelector('body')?.getAttribute('data-using-base-href')=='true'){
+      relativePath = document.querySelector('base')!.getAttribute('href')!;
+    }
+    else if(document.querySelector('body')!.getAttribute('data-base-href')=='') {
+      relativePath = './';
+    }
+    else{
+      relativePath = document.querySelector('body')!.getAttribute('data-base-href')!;
+    }
+    var href = Uri.parse(window.location.href);
+    var base = href.resolve(relativePath!);
+    var search = Uri.parse('${base}search.html');
+    return search.toString();
   }
 
   void handle(String? newValue , [bool forceUpdate = false]) {
@@ -403,7 +412,6 @@ void initializeSearch(
     var suggestions = findMatches(index, newValue);
     allResults = suggestions.length;
     if (suggestions.length > suggestionLimit) {
-      // moreResults.innerHtml = 'PressK "Enter" key to see all ${suggestions.length} results';
       suggestions = suggestions.sublist(0, suggestionLimit);
     }
 
@@ -439,7 +447,15 @@ void initializeSearch(
     event = event as KeyboardEvent;
 
     if (event.code == 'Enter') {
-      if(selectedElement!=null){
+
+      if(suggestionElements.isEmpty){
+        var input = htmlEscape.convert(actualValue);
+        var search = Uri.parse(relativePath());
+        search = search.replace(queryParameters: {'q': input});
+        window.location.assign(search.toString());
+      }
+
+      else if(selectedElement!=null){
         var selectingElement = selectedElement ?? 0;
         var href = suggestionElements[selectingElement].dataset['href'];
         if (href != null) {
@@ -448,19 +464,10 @@ void initializeSearch(
         return;
       }
       // If there no search suggestion selected then change the window location to the search.html
-      if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'||suggestionElements.isEmpty){
+      else if(selectedElement==null||listBox.getAttribute('aria-expanded')=='true'){
         // Saves the input in the search to be used for creating the query parameter
         var input = htmlEscape.convert(actualValue);
-        var relativePath = '';
-        if(document.querySelector('body')?.getAttribute('data-using-base-href')=='true' && document.querySelector('body')?.getAttribute('data-base-href') == ''){
-          relativePath = document.querySelector('base')!.getAttribute('href')!;
-        }
-        else {
-          relativePath = document.querySelector('body')!.getAttribute('data-base-href')!;
-        }
-        var href = Uri.parse(window.location.href);
-        var base = href.resolve(relativePath!);
-        var search = Uri.parse(base.toString() + 'search_results_page.html');
+        var search = Uri.parse(relativePath());
         search = search.replace(queryParameters: {'query': input});
         window.location.assign(search.toString());
       }
@@ -548,14 +555,24 @@ void initializeSearch(
   });
 
   // Verifying the href to check if the search html was called to generate the main content elements that are going to be displayed
-  if(window.location.href.contains('search_results_page.html')){
-    var input = uri.queryParameters['query'];
-    input = htmlEscape.convert(input!);
-    suggestionLimit=allResults;
-    handle(input);
-    searchResultPage(input);
-    hideSuggestions();
-    suggestionLimit=10;
+  if(window.location.href.contains('search.html')) {
+    if (window.location.href.contains('query')) {
+      var input = uri.queryParameters['query'];
+      input = htmlEscape.convert(input!);
+      suggestionLimit = 50;
+      handle(input);
+      searchResultPage(input);
+      hideSuggestions();
+      suggestionLimit = 10;
+    }
+    // var button = document?.querySelector("button.gsc-search-button.gsc-search-button-v2") as ButtonElement;
+    // button.addEventListener('click', (event){
+    //   var googleSearchInput = document?.querySelector('input.gsc-input') as InputElement;
+    //   print('search value ${googleSearchInput.value}');
+    //   var search2 = uri.replace(query:googleSearchInput.value!);
+    //   window.location.assign(search2.toString());
+    // });
+
   }
 }
 
